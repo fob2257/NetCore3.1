@@ -28,9 +28,9 @@ namespace NetCore3._1.API.Controllers
         }
 
         [HttpGet("{id}", Name = "GetAuthor")]
-        public ActionResult<Author> GetAuthor(int id)
+        public async Task<ActionResult<Author>> GetAuthor(int id)
         {
-            var author = context.Authors.Include(x => x.Books).FirstOrDefault(author => author.Id == id);
+            var author = await context.Authors.Include(x => x.Books).FirstOrDefaultAsync(author => author.Id == id);
 
             if (author == null) return NotFound();
 
@@ -38,34 +38,34 @@ namespace NetCore3._1.API.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreateAuthor([FromBody] Author author)
+        public async Task<ActionResult> CreateAuthor([FromBody] Author author)
         {
             context.Authors.Add(author);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
 
             return new CreatedAtRouteResult("GetAuthor", new { id = author.Id }, author);
         }
 
         [HttpPut("{id}")]
-        public ActionResult UpdateAuthor(int id, [FromBody] Author author)
+        public async Task<ActionResult> UpdateAuthor(int id, [FromBody] Author author)
         {
             if (author.Id != id) return BadRequest();
 
             context.Entry(author).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
-            context.SaveChanges();
+            await context.SaveChangesAsync();
 
             return Ok();
         }
 
         [HttpPut("{id}")]
-        public ActionResult<Author> DeleteAuthor(int id)
+        public async Task<ActionResult<Author>> DeleteAuthor(int id)
         {
-            var author = context.Authors.Include(x => x.Books).FirstOrDefault(author => author.Id == id);
+            var author = await context.Authors.Include(x => x.Books).FirstOrDefaultAsync(author => author.Id == id);
 
             if (author == null) return NotFound();
 
             context.Authors.Remove(author);
-            context.SaveChanges();
+            await context.SaveChangesAsync();
 
             return author;
         }
