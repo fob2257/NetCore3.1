@@ -10,21 +10,30 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using NetCore3_1.Data.Contexts;
 
 namespace NetCore3._1.API
 {
     public class Startup
     {
+        public IConfiguration Configuration { get; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<WebApiDbContext>(options =>
+            {
+                string connectionString = Configuration["ConnectionStrings:Default"];
+
+                options.UseSqlServer(connectionString);
+            });
+
             services.AddControllers();
         }
 
