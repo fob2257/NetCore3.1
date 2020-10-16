@@ -37,6 +37,7 @@ namespace NetCore3._1.API
 
             services.AddTransient<IMessageService, MessageService>();
             services.AddScoped<CustomActionFilter>();
+            services.AddTransient<IHostedService, WriteToFileHostedService>();
 
             services.AddResponseCaching();
 
