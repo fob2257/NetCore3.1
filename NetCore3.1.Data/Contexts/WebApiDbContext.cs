@@ -15,5 +15,6 @@ namespace NetCore3_1.Data.Contexts
         }
 
         public DbSet<Author> Authors { get; set; }
+        public DbSet<Book> Books { get; set; }
     }
 }
