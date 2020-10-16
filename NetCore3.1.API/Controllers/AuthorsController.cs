@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using NetCore3_1.API.Helpers;
 using NetCore3_1.Data.Contexts;
 using NetCore3_1.Models.Entities;
 
@@ -25,6 +26,7 @@ namespace NetCore3._1.API.Controllers
 
 
         [HttpGet]
+        [ServiceFilter(typeof(CustomActionFilter))]
         public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
         {
             logger.LogInformation("GetAuthors()");

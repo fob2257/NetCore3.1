@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using NetCore3_1.Data.Contexts;
 using NetCore3_1.Services.Interfaces;
 using NetCore3_1.Services.Services;
+using NetCore3_1.API.Helpers;
 
 namespace NetCore3._1.API
 {
@@ -35,6 +36,7 @@ namespace NetCore3._1.API
             //services.AddSingleton - generates a single instance
 
             services.AddTransient<IMessageService, MessageService>();
+            services.AddScoped<CustomActionFilter>();
 
             services.AddResponseCaching();
 
@@ -47,10 +49,15 @@ namespace NetCore3._1.API
                 options.UseSqlServer(connectionString);
             });
 
-            services.AddControllers().AddNewtonsoftJson(options =>
-            {
-                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-            });
+            services
+                .AddControllers(options =>
+                {
+                    options.Filters.Add(new ExceptionActionFilter());
+                })
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
