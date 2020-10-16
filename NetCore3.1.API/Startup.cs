@@ -35,6 +35,8 @@ namespace NetCore3._1.API
 
             services.AddTransient<IMessageService, MessageService>();
 
+            services.AddResponseCaching();
+
             services.AddDbContext<WebApiDbContext>(options =>
             {
                 string connectionString = Configuration["ConnectionStrings:Default"];
@@ -61,6 +63,8 @@ namespace NetCore3._1.API
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseResponseCaching();
 
             app.UseEndpoints(endpoints =>
             {

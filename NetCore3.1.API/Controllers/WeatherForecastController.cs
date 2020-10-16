@@ -24,16 +24,25 @@ namespace NetCore3._1.API.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        [ResponseCache(Duration = 15)]
+        public ActionResult<object> Get()
         {
             var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+
+
+            var forecast = Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = rng.Next(-20, 55),
                 Summary = Summaries[rng.Next(Summaries.Length)]
             })
             .ToArray();
+
+            return new
+            {
+                forecast,
+                currentDate = DateTime.Now.ToString()
+            };
         }
     }
 }
