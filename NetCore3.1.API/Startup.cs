@@ -12,6 +12,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using NetCore3_1.Data.Contexts;
+using NetCore3_1.Services.Interfaces;
+using NetCore3_1.Services.Services;
 
 namespace NetCore3._1.API
 {
@@ -27,6 +29,12 @@ namespace NetCore3._1.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddTransient - generates a new instance each time the service is called
+            //services.AddScoped - generates a new instance once per http petition
+            //services.AddSingleton - generates a single instance
+
+            services.AddTransient<IMessageService, MessageService>();
+
             services.AddDbContext<WebApiDbContext>(options =>
             {
                 string connectionString = Configuration["ConnectionStrings:Default"];

@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\NetCore3.1.Data\NetCore3.1.Data.csproj" />
+    <ProjectReference Include="..\NetCore3.1.Services\NetCore3.1.Services.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
