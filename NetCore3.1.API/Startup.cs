@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using NetCore3_1.Data.Contexts;
 using NetCore3_1.Services.Interfaces;
 using NetCore3_1.Services.Services;
@@ -36,6 +37,8 @@ namespace NetCore3._1.API
             services.AddTransient<IMessageService, MessageService>();
 
             services.AddResponseCaching();
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 
             services.AddDbContext<WebApiDbContext>(options =>
             {
@@ -65,6 +68,8 @@ namespace NetCore3._1.API
             app.UseAuthorization();
 
             app.UseResponseCaching();
+
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {
