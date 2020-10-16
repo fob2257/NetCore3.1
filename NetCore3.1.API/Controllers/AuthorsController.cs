@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NetCore3_1.Data.Contexts;
 using NetCore3_1.Models.Entities;
 
@@ -23,13 +24,13 @@ namespace NetCore3._1.API.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Author>> GetAuthors()
         {
-            return context.Authors.ToList();
+            return context.Authors.Include(x => x.Books).ToList();
         }
 
         [HttpGet("{id}", Name = "GetAuthor")]
         public ActionResult<Author> GetAuthor(int id)
         {
-            var author = context.Authors.FirstOrDefault(author => author.Id == id);
+            var author = context.Authors.Include(x => x.Books).FirstOrDefault(author => author.Id == id);
 
             if (author == null) return NotFound();
 
@@ -59,7 +60,7 @@ namespace NetCore3._1.API.Controllers
         [HttpPut("{id}")]
         public ActionResult<Author> DeleteAuthor(int id)
         {
-            var author = context.Authors.FirstOrDefault(author => author.Id == id);
+            var author = context.Authors.Include(x => x.Books).FirstOrDefault(author => author.Id == id);
 
             if (author == null) return NotFound();
 
