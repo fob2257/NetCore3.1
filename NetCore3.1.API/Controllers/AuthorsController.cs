@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NetCore3_1.Data.Contexts;
 using NetCore3_1.Models.Entities;
 
@@ -14,25 +15,33 @@ namespace NetCore3._1.API.Controllers
     public class AuthorsController : ControllerBase
     {
         private readonly WebApiDbContext context;
+        private readonly ILogger<AuthorsController> logger;
 
-        public AuthorsController(WebApiDbContext context)
+        public AuthorsController(WebApiDbContext context, ILogger<AuthorsController> logger)
         {
             this.context = context;
+            this.logger = logger;
         }
 
 
         [HttpGet]
-        public ActionResult<IEnumerable<Author>> GetAuthors()
+        public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
         {
-            return context.Authors.Include(x => x.Books).ToList();
+            logger.LogInformation("GetAuthors()");
+            return await context.Authors.Include(x => x.Books).ToListAsync();
         }
 
         [HttpGet("{id}", Name = "GetAuthor")]
         public async Task<ActionResult<Author>> GetAuthor(int id)
         {
+            logger.LogInformation($"GetAuthor({id})");
             var author = await context.Authors.Include(x => x.Books).FirstOrDefaultAsync(author => author.Id == id);
 
-            if (author == null) return NotFound();
+            if (author == null)
+            {
+                logger.LogWarning($"WARNING: Author {id} not found");
+                return NotFound();
+            }
 
             return author;
         }
