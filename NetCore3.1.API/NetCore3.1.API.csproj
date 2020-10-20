@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.9" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.9" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />
@@ -18,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\NetCore3.1.Data\NetCore3.1.Data.csproj" />
     <ProjectReference Include="..\NetCore3.1.Services\NetCore3.1.Services.csproj" />
+    <ProjectReference Include="..\NetCore3.1.Models\NetCore3.1.Models.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

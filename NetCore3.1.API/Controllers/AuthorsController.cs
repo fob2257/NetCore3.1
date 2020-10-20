@@ -2,11 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NetCore3_1.API.Helpers;
 using NetCore3_1.Data.Contexts;
+using NetCore3_1.Models.DTOs;
 using NetCore3_1.Models.Entities;
 
 namespace NetCore3._1.API.Controllers
@@ -17,9 +19,11 @@ namespace NetCore3._1.API.Controllers
     {
         private readonly WebApiDbContext context;
         private readonly ILogger<AuthorsController> logger;
+        private readonly IMapper mapper;
 
-        public AuthorsController(WebApiDbContext context, ILogger<AuthorsController> logger)
+        public AuthorsController(WebApiDbContext context, ILogger<AuthorsController> logger, IMapper mapper)
         {
+            this.mapper = mapper;
             this.context = context;
             this.logger = logger;
         }
@@ -27,14 +31,16 @@ namespace NetCore3._1.API.Controllers
 
         [HttpGet]
         [ServiceFilter(typeof(CustomActionFilter))]
-        public async Task<ActionResult<IEnumerable<Author>>> GetAuthors()
+        public async Task<ActionResult<IEnumerable<AuthorDTO>>> GetAuthors()
         {
             logger.LogInformation("GetAuthors()");
-            return await context.Authors.Include(x => x.Books).ToListAsync();
+            var authors = await context.Authors.Include(x => x.Books).ToListAsync();
+
+            return mapper.Map<List<AuthorDTO>>(authors);
         }
 
         [HttpGet("{id}", Name = "GetAuthor")]
-        public async Task<ActionResult<Author>> GetAuthor(int id)
+        public async Task<ActionResult<AuthorDTO>> GetAuthor(int id)
         {
             logger.LogInformation($"GetAuthor({id})");
             var author = await context.Authors.Include(x => x.Books).FirstOrDefaultAsync(author => author.Id == id);
@@ -45,21 +51,25 @@ namespace NetCore3._1.API.Controllers
                 return NotFound();
             }
 
-            return author;
+            return mapper.Map<AuthorDTO>(author);
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateAuthor([FromBody] Author author)
+        public async Task<ActionResult> CreateAuthor([FromBody] AuthorDTO authorDTO)
         {
+            var author = mapper.Map<Author>(authorDTO);
+
             context.Authors.Add(author);
             await context.SaveChangesAsync();
 
-            return new CreatedAtRouteResult("GetAuthor", new { id = author.Id }, author);
+            return new CreatedAtRouteResult("GetAuthor", new { id = author.Id }, mapper.Map<AuthorDTO>(author));
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateAuthor(int id, [FromBody] Author author)
+        public async Task<ActionResult> UpdateAuthor(int id, [FromBody] AuthorDTO authorDTO)
         {
+            var author = mapper.Map<Author>(authorDTO);
+
             if (author.Id != id) return BadRequest();
 
             context.Entry(author).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
@@ -69,7 +79,7 @@ namespace NetCore3._1.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Author>> DeleteAuthor(int id)
+        public async Task<ActionResult<AuthorDTO>> DeleteAuthor(int id)
         {
             var author = await context.Authors.Include(x => x.Books).FirstOrDefaultAsync(author => author.Id == id);
 
@@ -78,7 +88,7 @@ namespace NetCore3._1.API.Controllers
             context.Authors.Remove(author);
             await context.SaveChangesAsync();
 
-            return author;
+            return mapper.Map<AuthorDTO>(author);
         }
     }
 }

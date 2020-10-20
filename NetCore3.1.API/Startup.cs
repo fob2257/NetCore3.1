@@ -12,10 +12,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using AutoMapper;
 using NetCore3_1.Data.Contexts;
 using NetCore3_1.Services.Interfaces;
 using NetCore3_1.Services.Services;
 using NetCore3_1.API.Helpers;
+using NetCore3_1.Models.Entities;
+using NetCore3_1.Models.DTOs;
 
 namespace NetCore3._1.API
 {
@@ -37,7 +40,16 @@ namespace NetCore3._1.API
 
             services.AddTransient<IMessageService, MessageService>();
             services.AddScoped<CustomActionFilter>();
-            services.AddTransient<IHostedService, WriteToFileHostedService>();
+            // services.AddTransient<IHostedService, WriteToFileHostedService>();
+
+            services.AddAutoMapper(configuration =>
+            {
+                configuration.CreateMap<Author, AuthorDTO>();
+                configuration.CreateMap<Book, BookDTO>();
+                configuration.CreateMap<AuthorDTO, Author>();
+                configuration.CreateMap<BookDTO, Book>();
+            }, typeof(Startup));
+
 
             services.AddResponseCaching();
 
